@@ -46,6 +46,8 @@ Variabel-variabel utama yang digunakan setelah proses pembersihan adalah sebagai
 - ingredients: Daftar bahan atau kandungan dari produk.
 - category: Gabungan dari kategori primer, sekunder, dan tersier produk.
 
+Tautan Dataset: [Sephora Products and Skincare Reviews](https://www.kaggle.com/datasets/nadyinky/sephora-products-and-skincare-reviews)
+
 ### Exploratory Data Analysis
 Untuk memahami data lebih dalam, dilakukan beberapa visualisasi:
 
