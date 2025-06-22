@@ -196,3 +196,6 @@ $RMSE_{orig} = RMSE_{norm} \times (R_{max} - R_{min})$
 $RMSE_{\text{asli}} = 0.235 \times (5 - 1) = 0.94$
 
 Hasil ini menunjukkan bahwa, secara rata-rata, prediksi rating yang diberikan oleh model RecommenderNet memiliki kesalahan (deviasi) sekitar 0.94 bintang dari rating yang sebenarnya diberikan oleh pengguna. Ini adalah hasil yang cukup baik dan menunjukkan bahwa model Collaborative Filtering mampu memberikan prediksi yang akurat secara kuantitatif. Penggunaan callback EarlyStopping dan ModelCheckpoint memastikan bahwa model yang digunakan adalah model dari epoch dengan performa terbaik ini, bukan model dari epoch terakhir yang sudah mulai overfitting.
+
+## Referensi
+[1] Statista. (2024). Beauty and Personal Care - Worldwide. Diakses pada 22 Juni 2025, dari https://www.statista.com/outlook/cmo/beauty-personal-care/worldwide
