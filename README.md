@@ -305,8 +305,7 @@ Metrik ini bekerja dengan menghitung selisih antara rating prediksi dan rating a
 
 **Visualisasi Evaluasi Model Collaborative Filtering:**
 
-![image](https://github.com/user-attachments/assets/2347bee1-701b-4a0f-9785-8161597e84f3)
-
+![image](https://github.com/user-attachments/assets/dc422b10-e415-46b1-aadb-001a960af5b9)
 
 Berdasarkan hasil pelatihan model `RecommenderNet`, grafik di atas menunjukkan kemajuan yang sangat baik. Terlihat bahwa nilai error pada data validasi (val_root_mean_squared_error) terus menurun secara konsisten dan mulai mendatar, yang menandakan model mencapai performa puncaknya. Titik terendah pada grafik ini dicapai di sekitar epoch ke-9 dengan nilai RMSE sekitar 0.236. Penting untuk diingat bahwa nilai RMSE ini dihitung pada rating yang telah dinormalisasi ke rentang [0, 1]. Untuk menginterpretasikannya dalam skala rating asli (1-5 bintang), perlu dikembalikan menggunakan rumus: 
 
