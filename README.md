@@ -32,71 +32,117 @@ Untuk mencapai tujuan-tujuan tersebut, proyek ini akan mengimplementasikan tiga 
 3. Collaborative Filtering: Mengimplementasikan model faktorisasi matriks menggunakan arsitektur jaringan saraf tiruan (neural network) dengan TensorFlow/Keras. Pendekatan ini akan mempelajari embedding (representasi laten) untuk setiap pengguna dan produk untuk memprediksi rating.
 
 ## Data Understanding
-Dataset yang digunakan dalam proyek ini adalah "Sephora Products and Skincare Reviews", yang bersumber dari _platform_ Kaggle. Dataset ini terdiri dari tiga bagian utama: satu set _file_ berisi informasi detail produk (seperti brand, harga, kandungan, dan kategori) dan dua set _file_ berisi ulasan dari pengguna (termasuk ID pengguna, ID produk, dan rating yang diberikan). Pada dataset produk, terdapat 8.494 produk unik. Pada dataset ulasan pertama, terdapat 206.725 ulasan. Kemudian untuk dataset ulasan kedua, terdapat 116.262 ulasan. Masing-masing ketiga dataset awal ini memiliki _missing values_ yang cukup signifikan. Setelah proses pemuatan dan penggabungan awal, dataset mentah (`df_merged`) berisi 322.987 baris data ulasan. Kondisi data mentah ini menunjukkan adanya beberapa tantangan, seperti kolom yang terduplikasi akibat proses _merge_ (ditandai dengan akhiran _x dan _y), serta adanya nilai yang hilang (_missing values_) pada beberapa kolom deskriptif seperti `ingredients` dan `skin_type`, yang semuanya ditangani pada tahap Data Preparation.
+Dataset yang digunakan dalam proyek ini adalah "Sephora Products and Skincare Reviews", yang bersumber dari _platform_ Kaggle. Dataset ini terdiri dari tiga bagian utama: satu set _file_ berisi informasi detail produk (seperti brand, harga, kandungan, dan kategori) dan dua set _file_ berisi ulasan dari pengguna (termasuk ID pengguna, ID produk, dan rating yang diberikan). Setelah proses pemuatan dan penggabungan awal, dataset mentah (`df_merged`) berisi 322.987 baris data ulasan. Kondisi data mentah ini menunjukkan adanya beberapa tantangan, seperti kolom yang terduplikasi akibat proses _merge_ (ditandai dengan akhiran _x dan _y), serta adanya nilai yang hilang (_missing values_) pada beberapa kolom deskriptif seperti `ingredients` dan `skin_type`, yang semuanya ditangani pada tahap Data Preparation.
+
+**Kondisi Dataset Produk**
 
 Variabel-variabel utama yang terdapat pada dataset produk adalah sebagai berikut:
 
-- product_id: ID unik produk.
-- product_name: Nama produk.
-- brand_id: ID unik merek.
-- brand_name: Nama merek dari produk.
-- loves_count: Jumlah pengguna yang menyukai produk (fitur "Love").
-- rating: Nilai rata-rata penilaian dari pengguna.
-- reviews: Jumlah ulasan yang diterima produk.
-- size: Ukuran produk (misalnya: 30ml, 1 oz).
-- variation_type: Jenis variasi produk (misalnya: warna, ukuran).
-- variation_value: Nilai dari variasi produk (misalnya: “Red”, “Medium”).
-- variation_desc: Deskripsi tambahan dari variasi produk.
-- ingredients: Daftar bahan yang terkandung dalam produk.
-- price_usd: Harga normal produk dalam USD.
-- value_price_usd: Harga nilai (value price), jika tersedia.
-- sale_price_usd: Harga diskon (jika produk sedang dijual).
-- limited_edition: Indikator apakah produk edisi terbatas (1: ya, 0: tidak).
-- new: Indikator apakah produk merupakan produk baru (1: ya, 0: tidak).
-- online_only: Indikator apakah produk hanya tersedia secara online (1: ya, 0: tidak).
-- out_of_stock: Indikator apakah produk sedang tidak tersedia (1: ya, 0: tidak).
-- sephora_exclusive: Indikator apakah produk eksklusif di Sephora (1: ya, 0: tidak).
-- highlights: Fitur/keunggulan utama produk (biasanya berupa teks ringkasan).
-- primary_category: Kategori utama produk (misalnya: Skincare, Makeup).
-- secondary_category: Subkategori produk (misalnya: Foundation, Serum).
-- tertiary_category: Sub-subkategori atau jenis produk yang lebih spesifik.
-- child_count: Jumlah variasi anak dari produk (misalnya warna atau ukuran).
-- child_max_price: Harga tertinggi di antara variasi anak produk.
-- child_min_price: Harga terendah di antara variasi anak produk.
+| **Kolom**              | **Deskripsi**                                                                 |
+|------------------------|-------------------------------------------------------------------------------|
+| `product_id`           | ID unik produk.                                                               |
+| `product_name`         | Nama produk.                                                                  |
+| `brand_id`             | ID unik merek.                                                                |
+| `brand_name`           | Nama merek dari produk.                                                       |
+| `loves_count`          | Jumlah pengguna yang menyukai produk (fitur "Love").                          |
+| `rating`               | Nilai rata-rata penilaian dari pengguna.                                      |
+| `reviews`              | Jumlah ulasan yang diterima produk.                                           |
+| `size`                 | Ukuran produk (misalnya: 30ml, 1 oz).                                         |
+| `variation_type`       | Jenis variasi produk (misalnya: warna, ukuran).                               |
+| `variation_value`      | Nilai dari variasi produk (misalnya: “Red”, “Medium”).                        |
+| `variation_desc`       | Deskripsi tambahan dari variasi produk.                                       |
+| `ingredients`          | Daftar bahan yang terkandung dalam produk.                                    |
+| `price_usd`            | Harga normal produk dalam USD.                                                |
+| `value_price_usd`      | Harga nilai (value price), jika tersedia.                                     |
+| `sale_price_usd`       | Harga diskon (jika produk sedang dijual).                                     |
+| `limited_edition`      | Indikator apakah produk edisi terbatas (1: ya, 0: tidak).                     |
+| `new`                  | Indikator apakah produk merupakan produk baru (1: ya, 0: tidak).              |
+| `online_only`          | Indikator apakah produk hanya tersedia secara online (1: ya, 0: tidak).       |
+| `out_of_stock`         | Indikator apakah produk sedang tidak tersedia (1: ya, 0: tidak).              |
+| `sephora_exclusive`    | Indikator apakah produk eksklusif di Sephora (1: ya, 0: tidak).               |
+| `highlights`           | Fitur/keunggulan utama produk (biasanya berupa teks ringkasan).               |
+| `primary_category`     | Kategori utama produk (misalnya: Skincare, Makeup).                           |
+| `secondary_category`   | Subkategori produk (misalnya: Foundation, Serum).                             |
+| `tertiary_category`    | Sub-subkategori atau jenis produk yang lebih spesifik.                        |
+| `child_count`          | Jumlah variasi anak dari produk (misalnya warna atau ukuran).                 |
+| `child_max_price`      | Harga tertinggi di antara variasi anak produk.                                |
+| `child_min_price`      | Harga terendah di antara variasi anak produk.                                 |
+
+Dataset ini berisi informasi untuk 8.494 produk unik, dengan data inti seperti ID produk, nama, brand, harga, dan kategori utama yang sepenuhnya lengkap, menyediakan fondasi yang kuat untuk analisis. Meskipun demikian, terdapat tantangan data yang hilang pada beberapa fitur penting; kolom seperti rating, ingredients, dan size memiliki tingkat kelengkapan yang cukup baik tetapi tetap memerlukan penanganan data kosong (NaN). Masalah yang lebih signifikan terletak pada kolom-kolom yang sangat jarang terisi (sparse) seperti `sale_price_usd`, `value_price_usd`, dan `variation_desc`, yang mengindikasikan bahwa fitur-fitur ini hanya berlaku untuk sebagian kecil produk dan harus digunakan dengan hati-hati atau diabaikan dalam pemodelan umum untuk menghindari hasil yang tidak akurat.
+
+**Kondisi Dataset Ulasan Pertama**
+
+Variabel-variabel utama yang terdapat pada dataset ulasan pertama adalah sebagai berikut:
+
+| **Kolom**                   | **Deskripsi**                                                               |
+|----------------------------|------------------------------------------------------------------------------|
+| `Unnamed: 0`               | Indeks baris dari DataFrame asli (hasil dari ekspor CSV).                    |
+| `author_id`                | ID unik pengguna yang menulis ulasan.                                        |
+| `rating`                   | Nilai rating yang diberikan terhadap produk (dalam skala 1–5).               |
+| `is_recommended`           | Indikator apakah produk direkomendasikan oleh pengguna (1: ya, 0: tidak).    |
+| `helpfulness`              | Skor bantuan dari ulasan (berapa kali ulasan dianggap membantu).             |
+| `total_feedback_count`     | Jumlah total umpan balik (positif + negatif) yang diterima ulasan.           |
+| `total_neg_feedback_count` | Jumlah umpan balik negatif yang diterima ulasan.                             |
+| `total_pos_feedback_count` | Jumlah umpan balik positif yang diterima ulasan.                             |
+| `submission_time`          | Waktu/tanggal ketika ulasan dikirimkan.                                      |
+| `review_text`              | Isi atau konten teks dari ulasan produk.                                     |
+| `review_title`             | Judul dari ulasan produk.                                                    |
+| `skin_tone`                | Nada kulit pengguna yang memberikan ulasan.                                  |
+| `eye_color`                | Warna mata pengguna.                                                         |
+| `skin_type`                | Jenis kulit pengguna (misal: kering, berminyak, kombinasi).                  |
+| `hair_color`               | Warna rambut pengguna.                                                       |
+| `product_id`               | ID unik dari produk yang diulas.                                             |
+| `product_name`             | Nama produk yang diulas.                                                     |
+| `brand_name`               | Nama merek dari produk yang diulas.                                          |
+| `price_usd`                | Harga produk dalam dolar AS.                                                 |
+
+Dataset ini terdiri dari 206.725 ulasan dan memiliki fondasi yang sangat kuat untuk pemodelan, karena kolom-kolom inti seperti `author_id`, `product_id`, dan `rating` sepenuhnya lengkap tanpa ada data yang hilang. Namun, tantangan utama terletak pada data tambahan yang tidak lengkap; atribut profil pengguna seperti `skin_type` dan `skin_tone` memiliki sekitar 10-20% data yang kosong, sementara metrik `helpfulness` ulasan bahkan hilang lebih dari setengah. Hal ini mengindikasikan bahwa sementara model rekomendasi utama dapat dibangun dengan andal, personalisasi yang lebih mendalam berdasarkan atribut pengguna atau kualitas ulasan akan memerlukan strategi penanganan data kosong yang cermat, dan kolom `Unnamed: 0` yang merupakan sisa indeks sebaiknya dihapus.
+
+**Kondisi Dataset Ulasan Kedua**
 
 Variabel-variabel utama yang terdapat pada dataset ulasan adalah sebagai berikut:
 
-- Unnamed: 0: Indeks baris dari DataFrame asli (hasil dari ekspor CSV).
-- author_id: ID unik pengguna yang menulis ulasan.
-- rating: Nilai rating yang diberikan terhadap produk (dalam skala 1–5).
-- is_recommended: Indikator apakah produk direkomendasikan oleh pengguna (1: ya, 0: tidak).
-- helpfulness: Skor bantuan dari ulasan (berapa kali ulasan dianggap membantu).
-- total_feedback_count: Jumlah total umpan balik (positif + negatif) yang diterima ulasan.
-- total_neg_feedback_count: Jumlah umpan balik negatif yang diterima ulasan.
-- total_pos_feedback_count: Jumlah umpan balik positif yang diterima ulasan.
-- submission_time: Waktu/tanggal ketika ulasan dikirimkan.
-- review_text: Isi atau konten teks dari ulasan produk.
-- review_title: Judul dari ulasan produk.
-- skin_tone: Nada kulit pengguna yang memberikan ulasan.
-- eye_color: Warna mata pengguna.
-- skin_type: Jenis kulit pengguna (misal: kering, berminyak, kombinasi).
-- hair_color: Warna rambut pengguna.
-- product_id: ID unik dari produk yang diulas.
-- product_name: Nama produk yang diulas.
-- brand_name: Nama merek dari produk yang diulas.
-- price_usd: Harga produk dalam dolar AS.
+| **Kolom**                   | **Deskripsi**                                                               |
+|----------------------------|------------------------------------------------------------------------------|
+| `Unnamed: 0`               | Indeks baris dari DataFrame asli (hasil dari ekspor CSV).                    |
+| `author_id`                | ID unik pengguna yang menulis ulasan.                                        |
+| `rating`                   | Nilai rating yang diberikan terhadap produk (dalam skala 1–5).               |
+| `is_recommended`           | Indikator apakah produk direkomendasikan oleh pengguna (1: ya, 0: tidak).    |
+| `helpfulness`              | Skor bantuan dari ulasan (berapa kali ulasan dianggap membantu).             |
+| `total_feedback_count`     | Jumlah total umpan balik (positif + negatif) yang diterima ulasan.           |
+| `total_neg_feedback_count` | Jumlah umpan balik negatif yang diterima ulasan.                             |
+| `total_pos_feedback_count` | Jumlah umpan balik positif yang diterima ulasan.                             |
+| `submission_time`          | Waktu/tanggal ketika ulasan dikirimkan.                                      |
+| `review_text`              | Isi atau konten teks dari ulasan produk.                                     |
+| `review_title`             | Judul dari ulasan produk.                                                    |
+| `skin_tone`                | Nada kulit pengguna yang memberikan ulasan.                                  |
+| `eye_color`                | Warna mata pengguna.                                                         |
+| `skin_type`                | Jenis kulit pengguna (misal: kering, berminyak, kombinasi).                  |
+| `hair_color`               | Warna rambut pengguna.                                                       |
+| `product_id`               | ID unik dari produk yang diulas.                                             |
+| `product_name`             | Nama produk yang diulas.                                                     |
+| `brand_name`               | Nama merek dari produk yang diulas.                                          |
+| `price_usd`                | Harga produk dalam dolar AS.                                                 |
+
+Dataset ini berisi 116.262 ulasan yang memiliki fondasi data yang sangat solid, di mana kolom-kolom penting untuk sistem rekomendasi seperti `author_id`, `rating`, dan `product_id` sepenuhnya lengkap. Ini menunjukkan data sangat andal untuk pemodelan inti. Namun, tantangannya terletak pada kelengkapan data-data sekunder; atribut profil pengguna seperti `skin_type` dan `skin_tone` memiliki sekitar 8-15% data yang hilang, sementara metrik `helpfulness` bahkan hampir separuhnya kosong. Hal ini mengimplikasikan bahwa meskipun model utama dapat dibangun, fitur-fitur personalisasi tambahan atau yang berbasis kualitas ulasan memerlukan penanganan data kosong secara cermat, serta penghapusan kolom `Unnamed: 0` yang merupakan sisa dari proses impor data.
+
+**Kondisi Dataset Gabungan Bersih**
 
 Variabel-variabel utama yang digunakan setelah proses pembersihan adalah sebagai berikut:
 
-- author_id: ID unik untuk setiap pengguna/penulis ulasan.
-- user_rating: Rating yang diberikan oleh pengguna pada produk (skala 1-5).
-- product_id: ID unik untuk setiap produk.
-- product_name: Nama lengkap produk.
-- brand_name: Nama brand dari produk.
-- loves_count: Jumlah "loves" atau "likes" yang diterima produk, sebagai indikator popularitas.
-- avg_product_rating: Rating rata-rata yang dimiliki produk secara keseluruhan.
-- ingredients: Daftar bahan atau kandungan dari produk.
-- category: Gabungan dari kategori primer, sekunder, dan tersier produk.
+| **Kolom**             | **Deskripsi**                                                                 |
+|-----------------------|-------------------------------------------------------------------------------|
+| `author_id`           | ID unik untuk setiap pengguna/penulis ulasan.                                 |
+| `user_rating`         | Rating yang diberikan oleh pengguna pada produk (skala 1–5).                  |
+| `product_id`          | ID unik untuk setiap produk.                                                  |
+| `product_name`        | Nama lengkap produk.                                                          |
+| `brand_name`          | Nama brand dari produk.                                                       |
+| `loves_count`         | Jumlah "loves" atau "likes" yang diterima produk, sebagai indikator popularitas.|
+| `avg_product_rating`  | Rating rata-rata yang dimiliki produk secara keseluruhan.                     |
+| `ingredients`         | Daftar bahan atau kandungan dari produk.                                      |
+| `category`            | Gabungan dari kategori primer, sekunder, dan tersier produk.                  |
+
+Dataset ini menunjukkan bahwa proses pembersihan data telah berhasil dengan sangat baik, menghasilkan DataFrame `df_clean` yang berisi 313.566 baris data yang siap untuk dimodelkan. Hal yang paling signifikan adalah dataset ini sekarang sepenuhnya bersih tanpa ada nilai yang hilang (missing values) di 9 kolom esensial yang telah dipilih. Setiap kolom memiliki Non-Null Count yang sama dengan jumlah total entri, yang berarti terdapat data `author_id`, `user_rating`, dan `product_id` untuk Collaborative Filtering, serta data `ingredients`, `category`, dan `brand_name` yang lengkap untuk Content-Based Filtering, membuat dataset ini dalam kondisi ideal untuk tahap pengembangan model selanjutnya.
 
 Tautan Dataset: [Sephora Products and Skincare Reviews](https://www.kaggle.com/datasets/nadyinky/sephora-products-and-skincare-reviews)
 
@@ -215,11 +261,21 @@ Model ini adalah model paling canggih yang dibangun menggunakan arsitektur jarin
 - Kelebihan: Mampu menangkap pola preferensi yang kompleks dan memberikan rekomendasi yang sangat personal.
 - Kekurangan: Memerlukan data interaksi yang besar dan mengalami kesulitan dengan pengguna atau item baru (user/item cold-start problem).
 
-***Contoh Top-N Recommendation**
+**Contoh Top-N Recommendation**
 
-Berikut adalah contoh _output_ dari sistem gabungan yang menampilkan rekomendasi dari ketiga model:
+Berikut adalah contoh _output_ dari sistem gabungan yang menampilkan rekomendasi dari ketiga model.
 
-![image](https://github.com/user-attachments/assets/b21b90fc-4e61-4db0-aaaf-df39ffc03d87)
+Model Content-Based Filtering menghasilkan output sebagai berikut:
+
+![image](https://github.com/user-attachments/assets/583ee6b5-f59f-41a9-986c-786f36764aa1)
+
+Model Collaborative Filtering menghasilkan output sebagai berikut:
+
+![image](https://github.com/user-attachments/assets/fb4202a1-4022-40d8-a041-47deeeed37c8)
+
+Model Popularity-Based Filtering menghasilkan output sebagai berikut:
+
+![image](https://github.com/user-attachments/assets/a9114adf-c448-40cf-8dd1-edd847516ea8)
 
 ## Evaluation
 1. **Evaluasi Model Content-Based Filtering (Precision@K)**
@@ -230,7 +286,7 @@ Berikut adalah contoh _output_ dari sistem gabungan yang menampilkan rekomendasi
 
    Proses evaluasi dilakukan dengan mengambil sampel acak sebanyak 100 produk dari dataset. Untuk setiap produk, dihasilkan 5 rekomendasi teratas (sehingga K=5) dan menghitung nilai Precision@5-nya. Setelah menerapkan pembobotan fitur pada model Content-Based untuk meningkatkan akurasinya, evaluasi menghasilkan skor yang jauh lebih baik. Berdasarkan pengujian pada 100 sampel acak, model ini mencapai rata-rata Precision@5 sebesar 81.20%. Ini adalah hasil yang sangat baik dan menunjukkan tingkat relevansi yang tinggi. Artinya, secara rata-rata, dari 5 produk yang disarankan oleh model, lebih dari 4 di antaranya berasal dari kategori yang sama dengan produk asli.
    
-3. **Evaluasi Model Collaborative Filtering (RMSE)**
+2. **Evaluasi Model Collaborative Filtering (RMSE)**
 
    Metrik evaluasi utama yang diterapkan pada model Collaborative Filtering (RecommenderNet) adalah Root Mean Squared Error (RMSE) untuk mengukur seberapa akurat prediksi ratingnya.
 **Formula RMSE:**
@@ -247,7 +303,7 @@ Di mana:
 
 Metrik ini bekerja dengan menghitung selisih antara rating prediksi dan rating asli, mengkuadratkannya (agar semua nilai menjadi positif), merata-ratakannya, lalu mengambil akar kuadrat untuk mengembalikannya ke satuan asli. Intinya, RMSE memberitahu kita "rata-rata seberapa besar kesalahan prediksi rating model kita dalam satuan rating". Nilai yang lebih rendah menunjukkan model yang lebih baik.
 
-**Visualisasi Evaluasi Model Collaboratie=ve Filtering:**
+**Visualisasi Evaluasi Model Collaborative Filtering:**
 
 ![image](https://github.com/user-attachments/assets/2347bee1-701b-4a0f-9785-8161597e84f3)
 
@@ -259,6 +315,14 @@ $RMSE_{orig} = RMSE_{norm} \times (R_{max} - R_{min})$
 $RMSE_{\text{asli}} = 0.236 \times (5 - 1) = 0.944$
 
 Hasil ini menunjukkan bahwa, secara rata-rata, prediksi rating yang diberikan oleh model `RecommenderNet` memiliki kesalahan (deviasi) hanya sekitar 0.94 bintang dari rating yang sebenarnya diberikan oleh pengguna. Ini adalah hasil yang solid dan membuktikan bahwa model Collaborative Filtering mampu memberikan prediksi yang akurat secara kuantitatif. Penggunaan callback seperti EarlyStopping dan ModelCheckpoint sangat penting untuk memastikan model yang disimpan adalah versi dari epoch dengan performa terbaik.
+
+3. **Evaluasi Model Popularity-Based (Baseline)**
+
+Metrik yang digunakan adalah Precision@K, sama seperti pada evaluasi Content-Based. Untuk evaluasi ini, "rekomendasi" adalah daftar Top-5 produk paling populer yang sama yang diberikan kepada setiap pengguna di dalam data uji. Sebuah rekomendasi dianggap "relevan" untuk seorang pengguna jika produk tersebut ada di dalam daftar produk yang benar-benar disukai oleh pengguna tersebut (didefinisikan sebagai produk yang diberi rating 4 atau 5). Hasil evaluasi dari model Popularity-Based ini adalah sebagai berikut:
+
+Rata-rata Precision@5 sebesar 0.45%
+
+Hasil yang sangat rendah ini sudah diharapkan dan justru sangat berguna, karena secara kuantitatif membuktikan bahwa pendekatan "satu untuk semua" dengan merekomendasikan item populer tidak efektif dalam memenuhi selera personal setiap pengguna. Kurang dari 1% rekomendasi populer yang benar-benar cocok dengan preferensi pribadi pengguna. Skor 0.45% ini menjadi tolok ukur performa minimum yang harus bisa dilampaui oleh model Collaborative Filtering yang lebih canggih.
 
 ## Referensi
 [1] Statista. (2024). Beauty and Personal Care - Worldwide. Diakses pada 22 Juni 2025, dari https://www.statista.com/outlook/cmo/beauty-personal-care/worldwide
